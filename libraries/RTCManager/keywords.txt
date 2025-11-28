@@ -1,0 +1,29 @@
+#######################################
+# Syntax Coloring Map For RTCManager
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+RTC	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin	KEYWORD2
+beginConMultiplesServidores	KEYWORD2
+isNtpSync	KEYWORD2
+getTimeStr	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+NTP_SERVER1	LITERAL1
+NTP_SERVER2	LITERAL1
+NTP_SERVER3	LITERAL1
+GMT_OFFSET_SEC	LITERAL1
+DAYLIGHT_OFFSET_SEC	LITERAL1
+RTCMANAGER_DEBUG	LITERAL1

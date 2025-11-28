@@ -1,0 +1,27 @@
+# Arduino/ESP32
+*.ino.bin
+*.ino.elf
+*.ino.map
+*.hex
+build/
+.build/
+
+# PlatformIO
+.pio/
+.vscode/
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Temporary files
+*.tmp
+*.bak
+*.log
