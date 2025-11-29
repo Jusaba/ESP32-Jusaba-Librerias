@@ -1,43 +1,53 @@
 /**
  * @file Debug.h
- * @brief Sistema centralizado de debug modular para proyectos ESP32
+ * @brief Sistema de debug específico para proyectos con RTCManager
  * 
- * @details Sistema de macros condicionales para debug que permite activar/desactivar
- *          logging por módulos específicos. Optimiza el tamaño del binario eliminando
- *          todo el código de debug en producción.
+ * @details Macros condicionales de debug optimizadas para usar con RTCManager.
+ *          Proporciona logging específico para operaciones de tiempo, WiFi y RTC.
+ *          En producción, todo el código de debug se elimina (cero overhead).
  * 
  * **CARACTERÍSTICAS:**
- * - Debug modular por componentes
- * - Macros condicionales (cero overhead en producción)
- * - Soporte printf con formato
- * - Helper para información del sistema
+ * - Debug general del sistema
+ * - Debug específico de WiFi (necesario para NTP)
+ * - Debug específico de RTC/NTP (sincronización de tiempo)
+ * - Macros condicionales (sin impacto en producción)
+ * - Helpers para información del sistema
+ * 
+ * **CÓMO FUNCIONA:**
+ * - Si defines DEBUG, se activan los mensajes de debug generales
+ * - Si defines DEBUGWIFI, se activan mensajes de conexión WiFi
+ * - Si defines DEBUGRTC, se activan mensajes de sincronización NTP/RTC
+ * - Si comentas todos los #define, el código de debug se elimina completamente
  * 
  * **USO:**
  * 1. Copia este archivo a tu proyecto
  * 2. Comenta/descomenta los #define según necesites
  * 3. Usa las macros DBG_XXX en tu código
- * 4. En producción, comenta todos los #define
+ * 4. En producción final, comenta todos los #define
  * 
  * @example
  * @code
- * #define DEBUG              // Habilitar debug general
- * #define DEBUGWIFI          // Habilitar debug WiFi
+ * #define DEBUG              // Debug general
+ * #define DEBUGWIFI          // Debug WiFi
+ * #define DEBUGRTC           // Debug RTC/NTP
  * #include "Debug.h"
+ * #include <RTCManager.h>
  * 
  * void setup() {
  *     Serial.begin(115200);
  *     DBG("Sistema iniciado");
  *     DBG_WIFI("Conectando a WiFi...");
+ *     DBG_RTC("Sincronizando con NTP...");
  * }
  * @endcode
  * 
  * @author Julian Salas Bartolomé
- * @date 2025-11-28
+ * @date 2025-11-29
  * @version 1.0.0
  * 
- * @note Para proyectos pequeños, solo necesitas #define DEBUG
- * @note Para proyectos grandes, activa solo los módulos que necesites debugear
- * @warning Comentar TODOS los #define antes de compilar versión de producción
+ * @note Ideal para desarrollo y troubleshooting
+ * @note Comentar TODOS los #define para compilar versión de producción
+ * @warning El debug usa memoria y reduce velocidad - solo para desarrollo
  */
 
 #ifndef DEBUG_H
@@ -49,33 +59,41 @@
 // CONFIGURACIÓN DE DEBUG - Comentar/descomentar según necesidades
 // ============================================================================
 
-// Debug general del sistema (siempre útil durante desarrollo)
+// Debug general - Mensajes básicos del sistema
+// Actívalo durante el desarrollo inicial
 #define DEBUG
 
-// Debug específico por módulos - Personaliza según tu proyecto
-//#define DEBUGWIFI                   // Debug de conexión WiFi
-//#define DEBUGSERVER                 // Debug del servidor web
-//#define DEBUGOTA                    // Debug de actualizaciones OTA
-//#define DEBUGRTC                    // Debug de sincronización NTP/RTC
-//#define DEBUGSENSOR                 // Debug de sensores
-//#define DEBUGI2C                    // Debug de comunicación I2C
-//#define DEBUGSPI                    // Debug de comunicación SPI
-//#define DEBUGBLE                    // Debug de Bluetooth
-//#define DEBUGMQTT                   // Debug de MQTT
-//#define DEBUGDATABASE               // Debug de base de datos
-//#define DEBUGFILE                   // Debug de sistema de archivos
-//#define DEBUGTELEGRAM               // Debug de bot Telegram
-//#define DEBUGCUSTOM1                // Debug personalizado 1
-//#define DEBUGCUSTOM2                // Debug personalizado 2
+// Debug WiFi - Información de conexión WiFi
+// Muy útil cuando usas NTP (necesitas WiFi para sincronización)
+//#define DEBUGWIFI
+
+// Debug RTC/NTP - Información de sincronización de tiempo
+// Útil para ver si NTP funciona y cómo se actualiza la hora
+//#define DEBUGRTC
 
 // ============================================================================
-// MACROS DE DEBUG - Simplifican el uso de debug condicional
+// MACROS DE DEBUG - NO MODIFICAR (usar tal cual)
 // ============================================================================
 
 // --- Debug General ---
 #ifdef DEBUG
+    /**
+     * @brief Imprime mensaje de debug con salto de línea
+     * @param msg Mensaje a imprimir
+     */
     #define DBG(msg) Serial.println(String("[DEBUG] ") + msg)
+    
+    /**
+     * @brief Imprime mensaje de debug sin salto de línea
+     * @param msg Mensaje a imprimir
+     */
     #define DBG_PRINT(msg) Serial.print(String("[DEBUG] ") + msg)
+    
+    /**
+     * @brief Imprime mensaje de debug con formato printf
+     * @param fmt Formato estilo printf
+     * @param ... Argumentos variables
+     */
     #define DBG_PRINTF(fmt, ...) Serial.printf("[DEBUG] " fmt "\n", ##__VA_ARGS__)
 #else
     #define DBG(msg)
@@ -85,8 +103,23 @@
 
 // --- Debug WiFi ---
 #ifdef DEBUGWIFI
+    /**
+     * @brief Imprime mensaje de debug WiFi con salto de línea
+     * @param msg Mensaje a imprimir
+     */
     #define DBG_WIFI(msg) Serial.println(String("[WIFI] ") + msg)
+    
+    /**
+     * @brief Imprime mensaje de debug WiFi sin salto de línea
+     * @param msg Mensaje a imprimir
+     */
     #define DBG_WIFI_PRINT(msg) Serial.print(String("[WIFI] ") + msg)
+    
+    /**
+     * @brief Imprime mensaje de debug WiFi con formato printf
+     * @param fmt Formato estilo printf
+     * @param ... Argumentos variables
+     */
     #define DBG_WIFI_PRINTF(fmt, ...) Serial.printf("[WIFI] " fmt "\n", ##__VA_ARGS__)
 #else
     #define DBG_WIFI(msg)
@@ -94,32 +127,25 @@
     #define DBG_WIFI_PRINTF(fmt, ...)
 #endif
 
-// --- Debug Servidor ---
-#ifdef DEBUGSERVER
-    #define DBG_SRV(msg) Serial.println(String("[SRV] ") + msg)
-    #define DBG_SRV_PRINT(msg) Serial.print(String("[SRV] ") + msg)
-    #define DBG_SRV_PRINTF(fmt, ...) Serial.printf("[SRV] " fmt "\n", ##__VA_ARGS__)
-#else
-    #define DBG_SRV(msg)
-    #define DBG_SRV_PRINT(msg)
-    #define DBG_SRV_PRINTF(fmt, ...)
-#endif
-
-// --- Debug OTA ---
-#ifdef DEBUGOTA
-    #define DBG_OTA(msg) Serial.println(String("[OTA] ") + msg)
-    #define DBG_OTA_PRINT(msg) Serial.print(String("[OTA] ") + msg)
-    #define DBG_OTA_PRINTF(fmt, ...) Serial.printf("[OTA] " fmt "\n", ##__VA_ARGS__)
-#else
-    #define DBG_OTA(msg)
-    #define DBG_OTA_PRINT(msg)
-    #define DBG_OTA_PRINTF(fmt, ...)
-#endif
-
-// --- Debug RTC ---
+// --- Debug RTC/NTP ---
 #ifdef DEBUGRTC
+    /**
+     * @brief Imprime mensaje de debug RTC con salto de línea
+     * @param msg Mensaje a imprimir
+     */
     #define DBG_RTC(msg) Serial.println(String("[RTC] ") + msg)
+    
+    /**
+     * @brief Imprime mensaje de debug RTC sin salto de línea
+     * @param msg Mensaje a imprimir
+     */
     #define DBG_RTC_PRINT(msg) Serial.print(String("[RTC] ") + msg)
+    
+    /**
+     * @brief Imprime mensaje de debug RTC con formato printf
+     * @param fmt Formato estilo printf
+     * @param ... Argumentos variables
+     */
     #define DBG_RTC_PRINTF(fmt, ...) Serial.printf("[RTC] " fmt "\n", ##__VA_ARGS__)
 #else
     #define DBG_RTC(msg)
@@ -127,130 +153,22 @@
     #define DBG_RTC_PRINTF(fmt, ...)
 #endif
 
-// --- Debug Sensores ---
-#ifdef DEBUGSENSOR
-    #define DBG_SENSOR(msg) Serial.println(String("[SENSOR] ") + msg)
-    #define DBG_SENSOR_PRINT(msg) Serial.print(String("[SENSOR] ") + msg)
-    #define DBG_SENSOR_PRINTF(fmt, ...) Serial.printf("[SENSOR] " fmt "\n", ##__VA_ARGS__)
-#else
-    #define DBG_SENSOR(msg)
-    #define DBG_SENSOR_PRINT(msg)
-    #define DBG_SENSOR_PRINTF(fmt, ...)
-#endif
-
-// --- Debug I2C ---
-#ifdef DEBUGI2C
-    #define DBG_I2C(msg) Serial.println(String("[I2C] ") + msg)
-    #define DBG_I2C_PRINT(msg) Serial.print(String("[I2C] ") + msg)
-    #define DBG_I2C_PRINTF(fmt, ...) Serial.printf("[I2C] " fmt "\n", ##__VA_ARGS__)
-#else
-    #define DBG_I2C(msg)
-    #define DBG_I2C_PRINT(msg)
-    #define DBG_I2C_PRINTF(fmt, ...)
-#endif
-
-// --- Debug SPI ---
-#ifdef DEBUGSPI
-    #define DBG_SPI(msg) Serial.println(String("[SPI] ") + msg)
-    #define DBG_SPI_PRINT(msg) Serial.print(String("[SPI] ") + msg)
-    #define DBG_SPI_PRINTF(fmt, ...) Serial.printf("[SPI] " fmt "\n", ##__VA_ARGS__)
-#else
-    #define DBG_SPI(msg)
-    #define DBG_SPI_PRINT(msg)
-    #define DBG_SPI_PRINTF(fmt, ...)
-#endif
-
-// --- Debug Bluetooth ---
-#ifdef DEBUGBLE
-    #define DBG_BLE(msg) Serial.println(String("[BLE] ") + msg)
-    #define DBG_BLE_PRINT(msg) Serial.print(String("[BLE] ") + msg)
-    #define DBG_BLE_PRINTF(fmt, ...) Serial.printf("[BLE] " fmt "\n", ##__VA_ARGS__)
-#else
-    #define DBG_BLE(msg)
-    #define DBG_BLE_PRINT(msg)
-    #define DBG_BLE_PRINTF(fmt, ...)
-#endif
-
-// --- Debug MQTT ---
-#ifdef DEBUGMQTT
-    #define DBG_MQTT(msg) Serial.println(String("[MQTT] ") + msg)
-    #define DBG_MQTT_PRINT(msg) Serial.print(String("[MQTT] ") + msg)
-    #define DBG_MQTT_PRINTF(fmt, ...) Serial.printf("[MQTT] " fmt "\n", ##__VA_ARGS__)
-#else
-    #define DBG_MQTT(msg)
-    #define DBG_MQTT_PRINT(msg)
-    #define DBG_MQTT_PRINTF(fmt, ...)
-#endif
-
-// --- Debug Database ---
-#ifdef DEBUGDATABASE
-    #define DBG_DB(msg) Serial.println(String("[DB] ") + msg)
-    #define DBG_DB_PRINT(msg) Serial.print(String("[DB] ") + msg)
-    #define DBG_DB_PRINTF(fmt, ...) Serial.printf("[DB] " fmt "\n", ##__VA_ARGS__)
-#else
-    #define DBG_DB(msg)
-    #define DBG_DB_PRINT(msg)
-    #define DBG_DB_PRINTF(fmt, ...)
-#endif
-
-// --- Debug File System ---
-#ifdef DEBUGFILE
-    #define DBG_FILE(msg) Serial.println(String("[FILE] ") + msg)
-    #define DBG_FILE_PRINT(msg) Serial.print(String("[FILE] ") + msg)
-    #define DBG_FILE_PRINTF(fmt, ...) Serial.printf("[FILE] " fmt "\n", ##__VA_ARGS__)
-#else
-    #define DBG_FILE(msg)
-    #define DBG_FILE_PRINT(msg)
-    #define DBG_FILE_PRINTF(fmt, ...)
-#endif
-
-// --- Debug Telegram ---
-#ifdef DEBUGTELEGRAM
-    #define DBG_TELEGRAM(msg) Serial.println(String("[TELEGRAM] ") + msg)
-    #define DBG_TELEGRAM_PRINT(msg) Serial.print(String("[TELEGRAM] ") + msg)
-    #define DBG_TELEGRAM_PRINTF(fmt, ...) Serial.printf("[TELEGRAM] " fmt "\n", ##__VA_ARGS__)
-#else
-    #define DBG_TELEGRAM(msg)
-    #define DBG_TELEGRAM_PRINT(msg)
-    #define DBG_TELEGRAM_PRINTF(fmt, ...)
-#endif
-
-// --- Debug Personalizado 1 ---
-#ifdef DEBUGCUSTOM1
-    #define DBG_CUSTOM1(msg) Serial.println(String("[CUSTOM1] ") + msg)
-    #define DBG_CUSTOM1_PRINT(msg) Serial.print(String("[CUSTOM1] ") + msg)
-    #define DBG_CUSTOM1_PRINTF(fmt, ...) Serial.printf("[CUSTOM1] " fmt "\n", ##__VA_ARGS__)
-#else
-    #define DBG_CUSTOM1(msg)
-    #define DBG_CUSTOM1_PRINT(msg)
-    #define DBG_CUSTOM1_PRINTF(fmt, ...)
-#endif
-
-// --- Debug Personalizado 2 ---
-#ifdef DEBUGCUSTOM2
-    #define DBG_CUSTOM2(msg) Serial.println(String("[CUSTOM2] ") + msg)
-    #define DBG_CUSTOM2_PRINT(msg) Serial.print(String("[CUSTOM2] ") + msg)
-    #define DBG_CUSTOM2_PRINTF(fmt, ...) Serial.printf("[CUSTOM2] " fmt "\n", ##__VA_ARGS__)
-#else
-    #define DBG_CUSTOM2(msg)
-    #define DBG_CUSTOM2_PRINT(msg)
-    #define DBG_CUSTOM2_PRINTF(fmt, ...)
-#endif
-
 // ============================================================================
 // FUNCIONES AUXILIARES DE DEBUG
 // ============================================================================
 
 /**
- * @brief Clase helper para funciones avanzadas de debug
+ * @brief Clase helper con funciones útiles de debug
  * 
  * @details Proporciona métodos estáticos para mostrar información del sistema,
- *          memoria, arrays, etc. Solo se compilan si DEBUG está definido.
+ *          memoria y otros datos útiles durante el desarrollo.
+ *          Solo se compilan si DEBUG está definido.
  */
 class DebugHelper {
 public:
     /**
-     * @brief Muestra memoria libre disponible
+     * @brief Muestra memoria libre disponible en el heap
+     * @note Útil para detectar fugas de memoria
      */
     static void printFreeHeap() {
         #ifdef DEBUG
@@ -259,16 +177,62 @@ public:
     }
     
     /**
-     * @brief Muestra información completa del sistema
+     * @brief Muestra información completa del sistema ESP32
+     * @note Incluye frecuencia CPU, tamaño flash, heap, chip ID
      */
     static void printSystemInfo() {
         #ifdef DEBUG
-        Serial.println("[DEBUG] === INFORMACIÓN DEL SISTEMA ===");
+        Serial.println("[DEBUG] ========== INFO SISTEMA ==========");
         Serial.printf("[DEBUG] CPU Freq: %d MHz\n", ESP.getCpuFreqMHz());
         Serial.printf("[DEBUG] Flash Size: %d bytes\n", ESP.getFlashChipSize());
         Serial.printf("[DEBUG] Free Heap: %d bytes\n", ESP.getFreeHeap());
         Serial.printf("[DEBUG] Chip ID: %08X\n", (uint32_t)ESP.getEfuseMac());
-        Serial.println("[DEBUG] ================================");
+        Serial.println("[DEBUG] ====================================");
+        #endif
+    }
+    
+    /**
+     * @brief Muestra estado de la conexión WiFi
+     * @note Útil para troubleshooting de conexión WiFi/NTP
+     */
+    static void printWiFiStatus() {
+        #ifdef DEBUGWIFI
+        Serial.println("[WIFI] ========== ESTADO WiFi ==========");
+        Serial.printf("[WIFI] Estado: %s\n", 
+                     WiFi.status() == WL_CONNECTED ? "Conectado" : "Desconectado");
+        if (WiFi.status() == WL_CONNECTED) {
+            Serial.printf("[WIFI] SSID: %s\n", WiFi.SSID().c_str());
+            Serial.printf("[WIFI] IP: %s\n", WiFi.localIP().toString().c_str());
+            Serial.printf("[WIFI] RSSI: %d dBm\n", WiFi.RSSI());
+        }
+        Serial.println("[WIFI] ====================================");
+        #endif
+    }
+    
+    /**
+     * @brief Imprime la hora actual del sistema
+     * @note Útil para verificar sincronización NTP
+     */
+    static void printCurrentTime() {
+        #ifdef DEBUGRTC
+        struct tm timeinfo;
+        if (!getLocalTime(&timeinfo)) {
+            Serial.println("[RTC] ERROR: No se pudo obtener la hora");
+            return;
+        }
+        
+        char buffer[64];
+        strftime(buffer, sizeof(buffer), "%d/%m/%Y %H:%M:%S", &timeinfo);
+        Serial.printf("[RTC] Hora actual: %s\n", buffer);
+        #endif
+    }
+    
+    /**
+     * @brief Imprime un separador visual en los logs
+     */
+    static void printSeparator() {
+        #ifdef DEBUG
+        Serial.println("[DEBUG] =======================================");
         #endif
     }
     
@@ -290,15 +254,6 @@ public:
         Serial.println();
         #endif
     }
-    
-    /**
-     * @brief Imprime separador visual en logs
-     */
-    static void printSeparator() {
-        #ifdef DEBUG
-        Serial.println("[DEBUG] =====================================");
-        #endif
-    }
 };
 
 // ============================================================================
@@ -306,38 +261,156 @@ public:
 // ============================================================================
 
 /*
- * CÓMO USAR ESTE ARCHIVO EN TU PROYECTO:
+ * GUÍA RÁPIDA DE USO CON RTCMANAGER:
  * 
- * 1. COPIAR A TU PROYECTO:
- *    - Copia este archivo Debug.h a la carpeta de tu proyecto
+ * 1. COPIAR ESTE ARCHIVO:
+ *    - Copia Debug.h a la carpeta de tu proyecto Arduino
  * 
- * 2. PERSONALIZAR MÓDULOS:
- *    - Descomenta los #define de los módulos que necesites
- *    - Añade más módulos copiando el patrón existente
+ * 2. ACTIVAR DEBUG SEGÚN NECESIDADES:
+ *    
+ *    A) Durante desarrollo inicial:
+ *       #define DEBUG          // Activa mensajes generales
+ *       #define DEBUGWIFI      // Ver estado WiFi
+ *       #define DEBUGRTC       // Ver sincronización NTP
+ *    
+ *    B) Para depurar solo WiFi:
+ *       //#define DEBUG        // Comentado
+ *       #define DEBUGWIFI      // Solo WiFi
+ *       //#define DEBUGRTC     // Comentado
+ *    
+ *    C) Para producción (compilación final):
+ *       //#define DEBUG        // TODO comentado
+ *       //#define DEBUGWIFI
+ *       //#define DEBUGRTC
  * 
- * 3. USAR EN TU CÓDIGO:
+ * 3. INCLUIR EN TU SKETCH:
  *    #include "Debug.h"
+ *    #include "Configuracion.h"
+ *    #include <RTCManager.h>
+ * 
+ * 4. USAR MACROS DE DEBUG:
  *    
  *    void setup() {
  *        Serial.begin(115200);
- *        DBG("Sistema iniciado");
+ *        
+ *        // Mensajes generales
+ *        DBG("Sistema iniciando...");
  *        DebugHelper::printSystemInfo();
+ *        
+ *        // Debug WiFi
+ *        DBG_WIFI("Conectando a WiFi...");
+ *        WiFi.begin(Config::WiFi::SSID, Config::WiFi::PASSWORD);
+ *        
+ *        while (WiFi.status() != WL_CONNECTED) {
+ *            delay(500);
+ *            DBG_WIFI_PRINT(".");
+ *        }
+ *        DBG_WIFI("\nConectado!");
+ *        DebugHelper::printWiFiStatus();
+ *        
+ *        // Debug RTC/NTP
+ *        DBG_RTC("Configurando NTP...");
+ *        configTime(Config::Time::GMT_OFFSET_SEC, 
+ *                   Config::Time::DAYLIGHT_OFFSET_SEC,
+ *                   Config::Time::NTP_SERVER1.c_str());
+ *        
+ *        delay(2000);  // Esperar sincronización
+ *        DebugHelper::printCurrentTime();
  *    }
  *    
  *    void loop() {
- *        DBG_WIFI("Conectando...");
- *        DBG_PRINTF("Valor: %d", miVariable);
+ *        // Usar macros según necesites
+ *        DBG("Loop ejecutándose");
+ *        DBG_PRINTF("Valor: %d, Estado: %s", miValor, miEstado);
  *    }
  * 
- * 4. COMPILAR PRODUCCIÓN:
- *    - Comenta TODOS los #define al principio del archivo
- *    - El compilador eliminará todo el código de debug
- *    - Resultado: binario más pequeño y rápido
+ * 5. MACROS DISPONIBLES:
+ *    
+ *    DEBUG GENERAL:
+ *    - DBG(msg)                    // Mensaje con salto de línea
+ *    - DBG_PRINT(msg)              // Mensaje sin salto de línea
+ *    - DBG_PRINTF(fmt, ...)        // Mensaje con formato printf
+ *    
+ *    DEBUG WiFi:
+ *    - DBG_WIFI(msg)               // Mensaje WiFi con salto
+ *    - DBG_WIFI_PRINT(msg)         // Mensaje WiFi sin salto
+ *    - DBG_WIFI_PRINTF(fmt, ...)   // Mensaje WiFi con formato
+ *    
+ *    DEBUG RTC:
+ *    - DBG_RTC(msg)                // Mensaje RTC con salto
+ *    - DBG_RTC_PRINT(msg)          // Mensaje RTC sin salto
+ *    - DBG_RTC_PRINTF(fmt, ...)    // Mensaje RTC con formato
+ *    
+ *    HELPERS:
+ *    - DebugHelper::printFreeHeap()      // Memoria libre
+ *    - DebugHelper::printSystemInfo()    // Info completa sistema
+ *    - DebugHelper::printWiFiStatus()    // Estado WiFi
+ *    - DebugHelper::printCurrentTime()   // Hora actual
+ *    - DebugHelper::printSeparator()     // Línea separadora
  * 
- * 5. AÑADIR MÓDULOS PERSONALIZADOS:
- *    - Copia el bloque de un módulo existente
- *    - Cambia el nombre (ej: DEBUGCUSTOM3)
- *    - Define las macros DBG_CUSTOM3, etc.
+ * 6. EJEMPLO COMPLETO:
+ *    
+ *    #define DEBUG
+ *    #define DEBUGWIFI
+ *    #define DEBUGRTC
+ *    #include "Debug.h"
+ *    #include "Configuracion.h"
+ *    #include <WiFi.h>
+ *    #include <RTCManager.h>
+ *    
+ *    void setup() {
+ *        Serial.begin(Config::Serial::BAUD_RATE);
+ *        delay(1000);
+ *        
+ *        DebugHelper::printSeparator();
+ *        DBG("Proyecto: " + Config::Project::NAME);
+ *        DBG("Versión: " + Config::Project::VERSION);
+ *        DebugHelper::printSystemInfo();
+ *        DebugHelper::printSeparator();
+ *        
+ *        // Conectar WiFi
+ *        DBG_WIFI("Conectando a: " + Config::WiFi::SSID);
+ *        WiFi.begin(Config::WiFi::SSID, Config::WiFi::PASSWORD);
+ *        
+ *        int intentos = 0;
+ *        while (WiFi.status() != WL_CONNECTED && intentos < 20) {
+ *            delay(500);
+ *            DBG_WIFI_PRINT(".");
+ *            intentos++;
+ *        }
+ *        
+ *        if (WiFi.status() == WL_CONNECTED) {
+ *            DBG_WIFI("\n¡WiFi conectado!");
+ *            DebugHelper::printWiFiStatus();
+ *            
+ *            // Configurar NTP
+ *            DBG_RTC("Sincronizando con NTP...");
+ *            configTime(Config::Time::GMT_OFFSET_SEC,
+ *                       Config::Time::DAYLIGHT_OFFSET_SEC,
+ *                       Config::Time::NTP_SERVER1.c_str(),
+ *                       Config::Time::NTP_SERVER2.c_str(),
+ *                       Config::Time::NTP_SERVER3.c_str());
+ *            
+ *            delay(3000);
+ *            DebugHelper::printCurrentTime();
+ *        } else {
+ *            DBG_WIFI("\nERROR: No se pudo conectar WiFi");
+ *        }
+ *        
+ *        DebugHelper::printSeparator();
+ *    }
+ * 
+ * VENTAJAS:
+ * ✅ Debug específico para RTCManager
+ * ✅ Fácil activar/desactivar por categorías
+ * ✅ Cero overhead en producción (se elimina al compilar)
+ * ✅ Mensajes bien categorizados ([DEBUG], [WIFI], [RTC])
+ * ✅ Helpers útiles para troubleshooting
+ * 
+ * IMPORTANTE:
+ * ⚠️  Comentar TODOS los #define antes de compilar versión final
+ * ⚠️  El debug consume memoria y reduce velocidad
+ * ⚠️  Solo usar durante desarrollo y troubleshooting
  */
 
 #endif // DEBUG_H
