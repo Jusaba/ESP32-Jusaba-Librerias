@@ -5,9 +5,6 @@
  * This is an EXAMPLE template. Copy this file to your project and customize it.
  * See templates/README.md for detailed instructions.
  * 
- * IMPORTANT: This extends the generic Debug.h from templates/ with
- * AlarmScheduler-specific functionality. Include both if needed.
- * 
  * @author Julian Salas Bartolomé
  * @date 2025-11-29
  */
@@ -24,26 +21,8 @@
 // Master debug switch
 #define DEBUG_ENABLED 1
 
-// Module-specific debug flags
-#define DEBUG_ALARMSCHEDULER 1    // AlarmScheduler library debug
-#define DEBUG_WIFI 1              // WiFi connection debug
-#define DEBUG_TIME 1              // NTP/RTC debug
-#define DEBUG_SPIFFS 1            // File system debug
-#define DEBUG_ACTIONS 1           // Alarm action callbacks debug
-
-// ============================================================================
-// BASIC DEBUG MACROS
-// ============================================================================
-
-#if DEBUG_ENABLED
-    #define DBG(x) Serial.println(x)
-    #define DBG_PRINT(x) Serial.print(x)
-    #define DBG_PRINTF(fmt, ...) Serial.printf(fmt, ##__VA_ARGS__)
-#else
-    #define DBG(x)
-    #define DBG_PRINT(x)
-    #define DBG_PRINTF(fmt, ...)
-#endif
+// AlarmScheduler debug flag
+#define DEBUG_ALARMSCHEDULER 1
 
 // ============================================================================
 // ALARMSCHEDULER DEBUG MACROS
@@ -60,71 +39,11 @@
 #endif
 
 // ============================================================================
-// WIFI DEBUG MACROS
-// ============================================================================
-
-#if DEBUG_ENABLED && DEBUG_WIFI
-    #define DBG_WIFI(x) Serial.println(String("[WiFi] ") + x)
-    #define DBG_WIFI_PRINT(x) Serial.print(String("[WiFi] ") + x)
-    #define DBG_WIFI_PRINTF(fmt, ...) Serial.printf("[WiFi] " fmt "\n", ##__VA_ARGS__)
-#else
-    #define DBG_WIFI(x)
-    #define DBG_WIFI_PRINT(x)
-    #define DBG_WIFI_PRINTF(fmt, ...)
-#endif
-
-// ============================================================================
-// TIME DEBUG MACROS
-// ============================================================================
-
-#if DEBUG_ENABLED && DEBUG_TIME
-    #define DBG_TIME(x) Serial.println(String("[TIME] ") + x)
-    #define DBG_TIME_PRINT(x) Serial.print(String("[TIME] ") + x)
-    #define DBG_TIME_PRINTF(fmt, ...) Serial.printf("[TIME] " fmt "\n", ##__VA_ARGS__)
-#else
-    #define DBG_TIME(x)
-    #define DBG_TIME_PRINT(x)
-    #define DBG_TIME_PRINTF(fmt, ...)
-#endif
-
-// ============================================================================
-// SPIFFS DEBUG MACROS
-// ============================================================================
-
-#if DEBUG_ENABLED && DEBUG_SPIFFS
-    #define DBG_FS(x) Serial.println(String("[SPIFFS] ") + x)
-    #define DBG_FS_PRINT(x) Serial.print(String("[SPIFFS] ") + x)
-    #define DBG_FS_PRINTF(fmt, ...) Serial.printf("[SPIFFS] " fmt "\n", ##__VA_ARGS__)
-#else
-    #define DBG_FS(x)
-    #define DBG_FS_PRINT(x)
-    #define DBG_FS_PRINTF(fmt, ...)
-#endif
-
-// ============================================================================
-// ACTION DEBUG MACROS
-// ============================================================================
-
-#if DEBUG_ENABLED && DEBUG_ACTIONS
-    #define DBG_ACTION(x) Serial.println(String("[ACTION] ") + x)
-    #define DBG_ACTION_PRINT(x) Serial.print(String("[ACTION] ") + x)
-    #define DBG_ACTION_PRINTF(fmt, ...) Serial.printf("[ACTION] " fmt "\n", ##__VA_ARGS__)
-#else
-    #define DBG_ACTION(x)
-    #define DBG_ACTION_PRINT(x)
-    #define DBG_ACTION_PRINTF(fmt, ...)
-#endif
-
-// ============================================================================
 // DEBUG HELPER CLASS - AlarmScheduler Extensions
 // ============================================================================
 
 class DebugHelper {
 public:
-    // ========================================================================
-    // ALARMSCHEDULER SPECIFIC DEBUG FUNCTIONS
-    // ========================================================================
-    
     /**
      * @brief Print alarm schedule summary
      * @param scheduler Pointer to AlarmScheduler instance
@@ -255,30 +174,11 @@ public:
         Serial.println("================================\n");
     }
     
-    // ========================================================================
-    // GENERIC DEBUG FUNCTIONS (from generic template)
-    // Include these if you're not using the generic templates/Debug.h
-    // ========================================================================
-    
     /**
      * @brief Print free heap memory
      */
     static void printFreeHeap() {
         Serial.printf("Free Heap: %u bytes\n", ESP.getFreeHeap());
-    }
-    
-    /**
-     * @brief Print system information
-     */
-    static void printSystemInfo() {
-        Serial.println("\n========== SYSTEM INFO ==========");
-        Serial.printf("Chip Model: %s\n", ESP.getChipModel());
-        Serial.printf("Chip Revision: %u\n", ESP.getChipRevision());
-        Serial.printf("CPU Freq: %u MHz\n", ESP.getCpuFreqMHz());
-        Serial.printf("Free Heap: %u bytes\n", ESP.getFreeHeap());
-        Serial.printf("Sketch Size: %u bytes\n", ESP.getSketchSize());
-        Serial.printf("Free Sketch: %u bytes\n", ESP.getFreeSketchSpace());
-        Serial.println("=================================\n");
     }
     
     /**
