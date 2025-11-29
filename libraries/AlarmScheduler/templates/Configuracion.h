@@ -36,17 +36,6 @@ namespace Config {
         const bool FORMAT_ON_FAIL = true;
         const size_t MAX_OPEN_FILES = 5;
     }
-
-    namespace Time {
-        const char NTP_SERVER1[] = "pool.ntp.org";
-        const char NTP_SERVER2[] = "time.nist.gov";
-        const char NTP_SERVER3[] = "time.google.com";
-        
-        const long GMT_OFFSET_SEC = 3600;        // GMT+1 (Spain)
-        const int  DAYLIGHT_OFFSET_SEC = 3600;   // DST +1 hour
-        
-        const char TIMEZONE[] = "CET-1CEST,M3.5.0,M10.5.0/3";  // Europe/Madrid
-    }
 }
 
 #endif // CONFIGURACION_H
