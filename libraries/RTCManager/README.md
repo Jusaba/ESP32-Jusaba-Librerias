@@ -1,23 +1,26 @@
 # RTCManager
 
-Librería avanzada de sincronización NTP para ESP32 con soporte de múltiples servidores, validación de fechas y manejo robusto de errores.
+**English | [Español](README.es.md)**
 
-## ✨ Características
+Advanced NTP synchronization library for ESP32 with multiple server support, date validation, and robust error handling.
 
-- ✅ **Múltiples servidores NTP** - Hasta 3 servidores con fallback automático
-- ✅ **Validación de fechas** - Verifica fechas realistas (2020-2050)
-- ✅ **Timeout configurable** - Evita bloqueos indefinidos
-- ✅ **Zona horaria automática** - Soporte GMT y horario de verano
-- ✅ **Debug opcional** - Logging detallado para troubleshooting
-- ✅ **Thread-safe** - Operaciones seguras en multi-core
-- ✅ **Sin dependencias** - Solo WiFi.h incluido en ESP32
+## ✨ Features
 
-## 📦 Instalación
+- ✅ **Multiple NTP servers** - Up to 3 servers with automatic fallback
+- ✅ **Date validation** - Verifies realistic dates (2020-2050)
+- ✅ **Configurable timeout** - Prevents indefinite blocking
+- ✅ **Automatic timezone** - GMT and daylight saving time support
+- ✅ **Optional debug** - Detailed logging for troubleshooting
+- ✅ **Thread-safe** - Safe operations in multi-core
+- ✅ **No dependencies** - Only WiFi.h included in ESP32
+- ✅ **Bilingual API** - Methods available in Spanish and English
+
+## 📦 Installation
 
 ### Arduino IDE
-1. Descarga la carpeta `RTCManager`
-2. Copia a `Documents/Arduino/libraries/`
-3. Reinicia Arduino IDE
+1. Download the `RTCManager` folder
+2. Copy to `Documents/Arduino/libraries/`
+3. Restart Arduino IDE
 
 ### PlatformIO
 ```ini
@@ -25,7 +28,7 @@ lib_deps =
     https://github.com/Jusaba/ESP32-Jusaba-Librerias.git#libraries/RTCManager
 ```
 
-## 🚀 Uso Rápido
+## 🚀 Quick Start
 
 ```cpp
 #include <WiFi.h>
@@ -34,15 +37,17 @@ lib_deps =
 void setup() {
     Serial.begin(115200);
     
-    // Conectar WiFi
+    // Connect WiFi
     WiFi.begin("SSID", "password");
     while (WiFi.status() != WL_CONNECTED) {
         delay(500);
     }
     
-    // Sincronizar NTP (recomendado)
-    if (RTC::beginConMultiplesServidores()) {
-        Serial.println("✅ Hora sincronizada: " + RTC::getTimeStr());
+    // Synchronize NTP (recommended)
+    // You can use English or Spanish method names
+    if (RTC::beginWithMultipleServers()) {
+        // Or: RTC::beginConMultiplesServidores()
+        Serial.println("✅ Time synchronized: " + RTC::getTimeStr());
     }
 }
 
@@ -56,30 +61,37 @@ void loop() {
 
 ## 📖 API Reference
 
-### RTC::beginConMultiplesServidores()
-Sincronización NTP con múltiples servidores (recomendado).
+> 🌍 **Note:** All methods are available in both Spanish and English.
+
+### RTC::beginWithMultipleServers() / beginConMultiplesServidores()
+NTP synchronization with multiple servers (recommended).
 
 ```cpp
+// English
+bool RTC::beginWithMultipleServers(unsigned long timeout_ms = 15000);
+
+// Español
 bool RTC::beginConMultiplesServidores(unsigned long timeout_ms = 15000);
 ```
 
-**Parámetros:**
-- `timeout_ms` - Timeout en milisegundos (defecto: 15000)
+**Parameters:**
+- `timeout_ms` - Timeout in milliseconds (default: 15000)
 
-**Retorna:**
-- `true` - Sincronización exitosa
-- `false` - Timeout o error
+**Returns:**
+- `true` - Successful synchronization
+- `false` - Timeout or error
 
-**Ejemplo:**
+**Example:**
 ```cpp
-// Timeout de 30 segundos
-if (RTC::beginConMultiplesServidores(30000)) {
+// 30 second timeout
+if (RTC::beginWithMultipleServers(30000)) {
+    // Or in Spanish: RTC::beginConMultiplesServidores(30000)
     Serial.println("NTP OK");
 }
 ```
 
 ### RTC::begin()
-Sincronización NTP con un solo servidor.
+NTP synchronization with a single server.
 
 ```cpp
 void RTC::begin(
@@ -90,58 +102,58 @@ void RTC::begin(
 );
 ```
 
-**Parámetros:**
-- `ntpServer` - Servidor NTP (defecto: "pool.ntp.org")
-- `gmtOffsetSec` - Offset GMT en segundos (defecto: 3600 para GMT+1)
-- `daylightOffsetSec` - Horario de verano en segundos (defecto: 3600)
-- `timeout_ms` - Timeout en milisegundos (defecto: 10000)
+**Parameters:**
+- `ntpServer` - NTP server (default: "pool.ntp.org")
+- `gmtOffsetSec` - GMT offset in seconds (default: 3600 for GMT+1)
+- `daylightOffsetSec` - Daylight saving time in seconds (default: 3600)
+- `timeout_ms` - Timeout in milliseconds (default: 10000)
 
-**Ejemplo:**
+**Example:**
 ```cpp
-// GMT-5 (Nueva York), sin horario verano
+// GMT-5 (New York), no daylight saving
 RTC::begin("time.google.com", -5*3600, 0);
 ```
 
 ### RTC::isNtpSync()
-Verifica estado de sincronización.
+Verifies synchronization status.
 
 ```cpp
 bool RTC::isNtpSync();
 ```
 
-**Retorna:**
-- `true` - Sincronización exitosa
-- `false` - Sin sincronización
+**Returns:**
+- `true` - Successful synchronization
+- `false` - No synchronization
 
-**Ejemplo:**
+**Example:**
 ```cpp
 if (RTC::isNtpSync()) {
-    // Usar fecha/hora con confianza
+    // Use date/time with confidence
 }
 ```
 
 ### RTC::getTimeStr()
-Obtiene fecha/hora actual formateada.
+Gets formatted current date/time.
 
 ```cpp
 String RTC::getTimeStr();
 ```
 
-**Retorna:**
-- String formato "YYYY-MM-DD HH:MM:SS"
-- "Error obteniendo hora" si falla
+**Returns:**
+- String format "YYYY-MM-DD HH:MM:SS"
+- "Error obteniendo hora" if it fails
 
-**Ejemplo:**
+**Example:**
 ```cpp
 String hora = RTC::getTimeStr();
 Serial.println(hora);  // 2025-11-28 15:30:45
 ```
 
-## ⚙️ Configuración
+## ⚙️ Configuration
 
-### Servidores NTP Personalizados
+### Custom NTP Servers
 
-Define antes de `#include <RTCManager.h>`:
+Define before `#include <RTCManager.h>`:
 
 ```cpp
 #define NTP_SERVER1 "pool.ntp.org"
@@ -151,14 +163,14 @@ Define antes de `#include <RTCManager.h>`:
 #include <RTCManager.h>
 ```
 
-### Zona Horaria
+### Timezone
 
 ```cpp
-// GMT+1 (España)
+// GMT+1 (Spain)
 #define GMT_OFFSET_SEC 3600
 #define DAYLIGHT_OFFSET_SEC 3600
 
-// GMT-5 (Nueva York)
+// GMT-5 (New York)
 #define GMT_OFFSET_SEC -18000
 #define DAYLIGHT_OFFSET_SEC 0
 
@@ -169,14 +181,14 @@ Define antes de `#include <RTCManager.h>`:
 #include <RTCManager.h>
 ```
 
-### Habilitar Debug
+### Enable Debug
 
 ```cpp
 #define RTCMANAGER_DEBUG
 #include <RTCManager.h>
 ```
 
-Muestra en Serial:
+Shows in Serial:
 ```
 [RTC] Iniciando sincronización NTP con múltiples servidores...
 [RTC] Servidores NTP configurados:
@@ -187,38 +199,38 @@ Muestra en Serial:
 [RTC]    Fecha/Hora: 2025-11-28 15:30:45
 ```
 
-## 📝 Ejemplos
+## 📝 Examples
 
-Ver carpeta `examples/` para más ejemplos completos.
+See `examples/` folder for more complete examples.
 
 ## 🔧 Troubleshooting
 
-### No sincroniza
-- ✅ Verifica conexión WiFi activa
-- ✅ Aumenta timeout: `beginConMultiplesServidores(60000)`
-- ✅ Activa debug: `#define RTCMANAGER_DEBUG`
-- ✅ Verifica firewall no bloquea puerto UDP 123
+### Not synchronizing
+- ✅ Verify active WiFi connection
+- ✅ Increase timeout: `beginConMultiplesServidores(60000)`
+- ✅ Enable debug: `#define RTCMANAGER_DEBUG`
+- ✅ Verify firewall doesn't block UDP port 123
 
-### Fecha incorrecta
-- ✅ Verifica `GMT_OFFSET_SEC` correcto para tu zona
-- ✅ Ajusta `DAYLIGHT_OFFSET_SEC` según horario de verano
-- ✅ Usa `beginConMultiplesServidores()` en lugar de `begin()`
+### Incorrect date
+- ✅ Verify correct `GMT_OFFSET_SEC` for your timezone
+- ✅ Adjust `DAYLIGHT_OFFSET_SEC` according to daylight saving time
+- ✅ Use `beginConMultiplesServidores()` instead of `begin()`
 
-### Bloqueos
-- ✅ Reduce timeout si red es lenta
-- ✅ Llama después de conectar WiFi
-- ✅ No llames en `loop()`, solo en `setup()`
+### Blocking
+- ✅ Reduce timeout if network is slow
+- ✅ Call after connecting WiFi
+- ✅ Don't call in `loop()`, only in `setup()`
 
-## 📄 Licencia
+## 📄 License
 
-MIT License - Ver LICENSE en el repositorio principal
+MIT License - See LICENSE in main repository
 
-## 👤 Autor
+## 👤 Author
 
 **Julián Salas Bartolomé**
 - GitHub: [@Jusaba](https://github.com/Jusaba)
 
-## 🔗 Enlaces
+## 🔗 Links
 
-- [Repositorio principal](https://github.com/Jusaba/ESP32-Jusaba-Librerias)
-- [Reportar issues](https://github.com/Jusaba/ESP32-Jusaba-Librerias/issues)
+- [Main repository](https://github.com/Jusaba/ESP32-Jusaba-Librerias)
+- [Report issues](https://github.com/Jusaba/ESP32-Jusaba-Librerias/issues)

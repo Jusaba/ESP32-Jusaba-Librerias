@@ -119,21 +119,63 @@
  */    
 class RTC {
 public:
+    // ========================================================================
+    // MÉTODOS PÚBLICOS - Disponibles en español e inglés
+    // PUBLIC METHODS - Available in Spanish and English
+    // ========================================================================
+    
+    /**
+     * @brief Inicializa sincronización NTP / Initialize NTP synchronization
+     */
     static void begin(const char* ntpServer = NTP_SERVER1, 
                       long gmtOffsetSec = GMT_OFFSET_SEC, 
                       int daylightOffsetSec = DAYLIGHT_OFFSET_SEC, 
                       unsigned long timeout_ms = 10000);
     
+    /**
+     * @brief Sincronización NTP con múltiples servidores (recomendado)
+     *        NTP synchronization with multiple servers (recommended)
+     */
     static bool beginConMultiplesServidores(unsigned long timeout_ms = 15000);
     
+    /**
+     * @brief Alias en inglés para beginConMultiplesServidores()
+     *        English alias for beginConMultiplesServidores()
+     */
+    static bool beginWithMultipleServers(unsigned long timeout_ms = 15000);
+    
+    /**
+     * @brief Verifica si la sincronización NTP fue exitosa
+     *        Checks if NTP synchronization was successful
+     */
     static bool isNtpSync();
     
+    /**
+     * @brief Obtiene fecha/hora actual como string
+     *        Gets current date/time as string
+     */
     static String getTimeStr();
 
 private:
+    // ========================================================================
+    // MÉTODOS PRIVADOS - Private methods
+    // ========================================================================
+    
+    /**
+     * @brief Convierte tm a string / Converts tm to string
+     */
     static String timeToString(const struct tm& timeinfo);
     
+    /**
+     * @brief Valida fecha / Validates date
+     */
     static bool ValidaFecha(const struct tm& timeinfo);
+    
+    /**
+     * @brief Alias en inglés para ValidaFecha()
+     *        English alias for ValidaFecha()
+     */
+    static bool validateDate(const struct tm& timeinfo);
 
     static bool ntpSyncOk;
 };

@@ -168,6 +168,30 @@ bool RTC::beginConMultiplesServidores(unsigned long timeout_ms)
     return false;
 }
 
+/**
+ * @brief Alias en inglés para beginConMultiplesServidores()
+ * @brief English alias for beginConMultiplesServidores()
+ * 
+ * @details This is a wrapper method that calls beginConMultiplesServidores()
+ *          providing an English-named alternative for international users.
+ *          All functionality is identical to the Spanish version.
+ * 
+ * @param timeout_ms Maximum timeout for synchronization in milliseconds (default: 15000)
+ * 
+ * @retval true Successful synchronization with valid date obtained
+ * @retval false Timeout reached without valid synchronization
+ * 
+ * @note This method is an alias - see beginConMultiplesServidores() for full documentation
+ * 
+ * @see beginConMultiplesServidores() - Main implementation
+ * 
+ * @since v1.0.0
+ */
+bool RTC::beginWithMultipleServers(unsigned long timeout_ms) 
+{
+    return beginConMultiplesServidores(timeout_ms);
+}
+
 // ========================================================================
 // MÉTODOS DE VALIDACIÓN Y ESTADO
 // ========================================================================
@@ -219,6 +243,29 @@ bool RTC::ValidaFecha(const struct tm& timeinfo) {
     }
 
     return true;
+}
+
+/**
+ * @brief Alias en inglés para ValidaFecha()
+ * @brief English alias for ValidaFecha()
+ * 
+ * @details This is a wrapper method that calls ValidaFecha()
+ *          providing an English-named alternative for international users.
+ *          All functionality is identical to the Spanish version.
+ * 
+ * @param timeinfo tm structure with date/time to validate
+ * 
+ * @retval true Valid date within acceptable ranges
+ * @retval false Invalid date or outside expected ranges
+ * 
+ * @note This method is an alias - see ValidaFecha() for full documentation
+ * 
+ * @see ValidaFecha() - Main implementation
+ * 
+ * @since v1.0.0
+ */
+bool RTC::validateDate(const struct tm& timeinfo) {
+    return ValidaFecha(timeinfo);
 }
 
 /**

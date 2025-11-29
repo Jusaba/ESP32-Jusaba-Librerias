@@ -1,45 +1,47 @@
-# ESP32 Jusaba Librerías
+# ESP32 Jusaba Libraries
 
-Colección de librerías reutilizables para proyectos ESP32 desarrolladas por Jusaba.
+**English | [Español](README.es.md)**
 
-## 📚 Librerías Disponibles
+Collection of reusable libraries for ESP32 projects developed by Jusaba.
+
+## 📚 Available Libraries
 
 ### RTCManager
-Gestión avanzada de sincronización temporal NTP con múltiples servidores y validación de fechas.
+Advanced NTP time synchronization management with multiple servers and date validation.
 
-- ✅ Sincronización NTP con redundancia (3 servidores)
-- ✅ Validación automática de fechas
-- ✅ Timeout configurable
-- ✅ Manejo de zona horaria y horario de verano
-- ✅ Fallback automático entre servidores
+- ✅ NTP synchronization with redundancy (3 servers)
+- ✅ Automatic date validation
+- ✅ Configurable timeout
+- ✅ Timezone and daylight saving time handling
+- ✅ Automatic fallback between servers
 
-[Ver documentación completa →](libraries/RTCManager/README.md)
+[View full documentation →](libraries/RTCManager/README.md)
 
-## 🚀 Instalación
+## 🚀 Installation
 
-### Método 1: Arduino IDE
-1. Descarga el repositorio como ZIP
-2. En Arduino IDE: `Sketch` → `Include Library` → `Add .ZIP Library`
-3. Selecciona la carpeta `libraries/RTCManager`
+### Method 1: Arduino IDE
+1. Download the repository as ZIP
+2. In Arduino IDE: `Sketch` → `Include Library` → `Add .ZIP Library`
+3. Select the `libraries/RTCManager` folder
 
-### Método 2: Manual
-1. Clona el repositorio:
+### Method 2: Manual
+1. Clone the repository:
    ```bash
    git clone https://github.com/Jusaba/ESP32-Jusaba-Librerias.git
    ```
-2. Copia la carpeta `libraries/RTCManager` a tu carpeta de librerías de Arduino:
+2. Copy the `libraries/RTCManager` folder to your Arduino libraries folder:
    - Windows: `Documents/Arduino/libraries/`
    - Linux: `~/Arduino/libraries/`
    - macOS: `~/Documents/Arduino/libraries/`
 
-### Método 3: PlatformIO
-Añade al `platformio.ini`:
+### Method 3: PlatformIO
+Add to `platformio.ini`:
 ```ini
 lib_deps = 
     https://github.com/Jusaba/ESP32-Jusaba-Librerias.git#libraries/RTCManager
 ```
 
-## 📖 Uso Rápido
+## 📖 Quick Start
 
 ```cpp
 #include <RTCManager.h>
@@ -48,15 +50,15 @@ void setup() {
     Serial.begin(115200);
     WiFi.begin("SSID", "password");
     
-    // Esperar conexión WiFi
+    // Wait for WiFi connection
     while (WiFi.status() != WL_CONNECTED) {
         delay(500);
     }
     
-    // Sincronizar con múltiples servidores NTP
+    // Synchronize with multiple NTP servers
     if (RTC::beginConMultiplesServidores()) {
-        Serial.println("✅ Sincronización NTP exitosa");
-        Serial.println("Hora: " + RTC::getTimeStr());
+        Serial.println("✅ NTP synchronization successful");
+        Serial.println("Time: " + RTC::getTimeStr());
     }
 }
 
@@ -68,22 +70,22 @@ void loop() {
 }
 ```
 
-## 🛠️ Próximas Librerías
+## 🛠️ Upcoming Libraries
 
-- [ ] TelegramService - Cliente Telegram con comandos personalizados
-- [ ] OTAService - Actualización OTA desde GitHub Releases
-- [ ] WebServerManager - Servidor web asíncrono con WebSockets
-- [ ] SPIFFSManager - Gestión simplificada de archivos SPIFFS
+- [ ] TelegramService - Telegram client with custom commands
+- [ ] OTAService - OTA updates from GitHub Releases
+- [ ] WebServerManager - Async web server with WebSockets
+- [ ] SPIFFSManager - Simplified SPIFFS file management
 
-## 🤝 Contribuir
+## 🤝 Contributing
 
-¿Tienes una librería útil para ESP32? Ver [CONTRIBUTING.md](docs/contributing.md)
+Have a useful ESP32 library? See [CONTRIBUTING.md](docs/contributing.md)
 
-## 📄 Licencia
+## 📄 License
 
-MIT License - Ver [LICENSE](LICENSE) para más detalles
+MIT License - See [LICENSE](LICENSE) for details
 
-## 👤 Autor
+## 👤 Author
 
 **Julián Salas Bartolomé**
 - GitHub: [@Jusaba](https://github.com/Jusaba)
@@ -91,5 +93,5 @@ MIT License - Ver [LICENSE](LICENSE) para más detalles
 ## 📝 Changelog
 
 ### v1.0.0 (2025-11-28)
-- ✨ Primera versión
-- ✨ RTCManager: Sincronización NTP con múltiples servidores
+- ✨ First release
+- ✨ RTCManager: NTP synchronization with multiple servers
