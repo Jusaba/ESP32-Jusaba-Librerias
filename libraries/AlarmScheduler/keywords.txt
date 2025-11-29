@@ -1,0 +1,68 @@
+#######################################
+# Syntax Coloring Map For AlarmScheduler
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+AlarmScheduler	KEYWORD1
+Alarm	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin	KEYWORD2
+check	KEYWORD2
+add	KEYWORD2
+addExternal	KEYWORD2
+addExternal0	KEYWORD2
+disable	KEYWORD2
+enable	KEYWORD2
+clear	KEYWORD2
+count	KEYWORD2
+get	KEYWORD2
+getMutable	KEYWORD2
+resetCache	KEYWORD2
+addPersonalizable	KEYWORD2
+addCustomizable	KEYWORD2
+modificarPersonalizable	KEYWORD2
+modifyCustomizable	KEYWORD2
+eliminarPersonalizable	KEYWORD2
+deleteCustomizable	KEYWORD2
+habilitarPersonalizable	KEYWORD2
+enableCustomizable	KEYWORD2
+obtenerPersonalizablesJSON	KEYWORD2
+getCustomizablesJSON	KEYWORD2
+obtenerEstadisticasJSON	KEYWORD2
+getStatisticsJSON	KEYWORD2
+cargarPersonalizablesDesdeJSON	KEYWORD2
+loadCustomizablesFromJSON	KEYWORD2
+guardarPersonalizablesEnJSON	KEYWORD2
+saveCustomizablesToJSON	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+DOW_DOMINGO	LITERAL1
+DOW_LUNES	LITERAL1
+DOW_MARTES	LITERAL1
+DOW_MIERCOLES	LITERAL1
+DOW_JUEVES	LITERAL1
+DOW_VIERNES	LITERAL1
+DOW_SABADO	LITERAL1
+DOW_TODOS	LITERAL1
+DOW_SUNDAY	LITERAL1
+DOW_MONDAY	LITERAL1
+DOW_TUESDAY	LITERAL1
+DOW_WEDNESDAY	LITERAL1
+DOW_THURSDAY	LITERAL1
+DOW_FRIDAY	LITERAL1
+DOW_SATURDAY	LITERAL1
+DOW_ALL	LITERAL1
+ALARMA_WILDCARD	LITERAL1
+ALARM_WILDCARD	LITERAL1
+MAX_ALARMAS	LITERAL1
+MAX_ALARMS	LITERAL1
