@@ -1,6 +1,6 @@
 # Plantillas de AlarmScheduler
 
-**Español** | [English](README.md)
+[English](README.md) | **Español**
 
 ## Descripción
 

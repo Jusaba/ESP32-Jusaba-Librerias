@@ -1,6 +1,6 @@
 # AlarmScheduler
 
-[Español](README.es.md) | **English**
+**English** | [Español](README.es.md)
 
 > Advanced alarm scheduling library for ESP32 with web management, JSON persistence, and flexible callback system.
 

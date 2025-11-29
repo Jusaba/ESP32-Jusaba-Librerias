@@ -1,6 +1,6 @@
 # AlarmScheduler Templates
 
-[Español](README.es.md) | **English**
+**English** | [Español](README.es.md)
 
 ## Overview
 

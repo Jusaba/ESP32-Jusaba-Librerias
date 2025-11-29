@@ -1,6 +1,6 @@
 # AlarmScheduler
 
-**Español** | [English](README.md)
+[English](README.md) | **Español**
 
 > Biblioteca avanzada de programación de alarmas para ESP32 con gestión web, persistencia JSON y sistema flexible de callbacks.
 
